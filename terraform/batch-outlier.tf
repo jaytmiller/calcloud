@@ -1,15 +1,15 @@
 resource "aws_batch_job_queue" "batch_outlier_queue" {
+  name = "calcloud-hst-outlier-queue${var.name_suffix}"
   compute_environments = [
     aws_batch_compute_environment.calcloud_outlier.arn
   ]
-  name = "calcloud-hst-outlier-queue"
   priority = 10
   state = "ENABLED"
-  
+
 }
 
 resource "aws_batch_compute_environment" "calcloud_outlier" {
-  compute_environment_name = "calcloud-hst-outlier"
+  compute_environment_name = "calcloud-hst-outlier${var.name_suffix}"
   type = "MANAGED"
   service_role = var.aws_batch_job_role_arn
 
@@ -36,4 +36,3 @@ resource "aws_batch_compute_environment" "calcloud_outlier" {
   }
   lifecycle { ignore_changes = [compute_resources.0.desired_vcpus] }
 }
-
