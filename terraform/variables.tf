@@ -26,7 +26,7 @@ variable "aws_batch_job_role_arn" {
   type = string
 }
 
-varibable "environment" {
+variable "environment" {
   description = "Suffix attached to resource names to characterize a particular deployment."
   type = string
   default = ""
