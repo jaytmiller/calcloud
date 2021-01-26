@@ -13,7 +13,7 @@ resource "aws_launch_template" "hstdp" {
   name = "calcloud-hst-worker${var.environment}"
   description             = "Template for cluster worker nodes updated to limit stopped container lifespan"
   ebs_optimized           = "false"
-  image_id                = "ami-07a63940735aebd38" # this is an amazon ECS community AMI
+  image_id                = data.aws_ssm_parameter.batch_ami_id.value
   tags                    = {
     "Name"         = "calcloud-hst-worker${var.environment}"
     "calcloud-hst" = "calcloud-hst-worker${var.environment}"
