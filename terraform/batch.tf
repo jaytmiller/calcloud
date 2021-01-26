@@ -10,13 +10,13 @@ data "template_file" "userdata" {
 }
 
 resource "aws_launch_template" "hstdp" {
-  name = "calcloud-hst-worker-ec2-template${var.name_suffix}"
+  name = "calcloud-hst-worker${var.environment}"
   description             = "Template for cluster worker nodes updated to limit stopped container lifespan"
   ebs_optimized           = "false"
   image_id                = "ami-07a63940735aebd38" # this is an amazon ECS community AMI
   tags                    = {
-    "Name"         = "calcloud-hst-worker${var.name_suffix}"
-    "calcloud-hst" = "calcloud-hst-worker${var.name_suffix}"
+    "Name"         = "calcloud-hst-worker${var.environment}"
+    "calcloud-hst" = "calcloud-hst-worker${var.environment}"
   }
   user_data               = base64encode(data.template_file.userdata.rendered)
   vpc_security_group_ids  = [
@@ -43,22 +43,22 @@ resource "aws_launch_template" "hstdp" {
   tag_specifications {
     resource_type = "instance"
     tags = {
-      "Name" = "calcloud-hst-worker${var.name_suffix}"
-      "calcloud-hst" = "calcloud-hst-worker${var.name_suffix}"
+      "Name" = "calcloud-hst-worker${var.environment}"
+      "calcloud-hst" = "calcloud-hst-worker${var.environment}"
     }
   }
 
   tag_specifications {
     resource_type = "volume"
     tags = {
-      "Name" = "calcloud-hst-worker${var.name_suffix}"
-      "calcloud-hst" = "calcloud-hst-worker${var.name_suffix}"
+      "Name" = "calcloud-hst-worker${var.environment}"
+      "calcloud-hst" = "calcloud-hst-worker${var.environment}"
     }
   }
 }
 
 resource "aws_batch_job_queue" "batch_queue" {
-  name = "calcloud-hst-queue${var.name_suffix}"
+  name = "calcloud-hst-queue${var.environment}"
   compute_environments = [
     aws_batch_compute_environment.calcloud.arn
   ]
@@ -68,7 +68,7 @@ resource "aws_batch_job_queue" "batch_queue" {
 }
 
 resource "aws_batch_compute_environment" "calcloud" {
-  compute_environment_name  = "calcloud-hst${var.name_suffix}"
+  compute_environment_name  = "calcloud-hst${var.environment}"
   type = "MANAGED"
   service_role = var.aws_batch_service_role_arn
 
@@ -98,7 +98,7 @@ resource "aws_batch_compute_environment" "calcloud" {
 }
 
 resource "aws_ecr_repository" "caldp_ecr" {
-  name                 = "caldp${var.name_suffix}"
+  name                 = "caldp${var.environment}"
 }
 
 data "aws_ecr_image" "caldp_latest" {
@@ -107,7 +107,7 @@ data "aws_ecr_image" "caldp_latest" {
 }
 
 resource "aws_batch_job_definition" "calcloud" {
-  name                 = "calcloud-hst-caldp-job-definition${var.suffix}"
+  name                 = "calcloud-hst-caldp-job-definition${var.environment}"
   type                 = "container"
   container_properties = <<CONTAINER_PROPERTIES
   {
@@ -134,10 +134,10 @@ resource "aws_batch_job_definition" "calcloud" {
 }
 
 resource "aws_s3_bucket" "calcloud" {
-  bucket = "${var.s3_bucket_prefix}-${var.name_suffix}"
+  bucket = "calcloud-hst-pipeline-outputs${var.environment}"
   tags = {
-    "CALCLOUD" = "calcloud-hst-pipeline-outputs${var.name_suffix}"
-    "Name"     = "calcloud-hst-pipeline-outputs${var.name_suffix}"
+    "CALCLOUD" = "calcloud-hst-pipeline-outputs${var.environment}"
+    "Name"     = "calcloud-hst-pipeline-outputs${var.environment}"
   }
 }
 

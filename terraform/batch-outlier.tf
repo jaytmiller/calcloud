@@ -1,5 +1,5 @@
 resource "aws_batch_job_queue" "batch_outlier_queue" {
-  name = "calcloud-hst-outlier-queue${var.name_suffix}"
+  name = "calcloud-hst-outlier-queue${var.environment}"
   compute_environments = [
     aws_batch_compute_environment.calcloud_outlier.arn
   ]
@@ -9,7 +9,7 @@ resource "aws_batch_job_queue" "batch_outlier_queue" {
 }
 
 resource "aws_batch_compute_environment" "calcloud_outlier" {
-  compute_environment_name = "calcloud-hst-outlier${var.name_suffix}"
+  compute_environment_name = "calcloud-hst-outlier${var.environment}"
   type = "MANAGED"
   service_role = var.aws_batch_job_role_arn
 

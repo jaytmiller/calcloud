@@ -26,13 +26,8 @@ variable "aws_batch_job_role_arn" {
   type = string
 }
 
-variable "s3_bucket_prefix" {
-  description = "First half of bucket name,  var.name_suffix appended to create full bucket name."
-  type = string
-}
-
-varibable "name_suffix" {
-  description = "Suffix attached to all resource names to make multiple deployments per account unique."
+varibable "environment" {
+  description = "Suffix attached to resource names to characterize a particular deployment."
   type = string
   default = ""
 }
